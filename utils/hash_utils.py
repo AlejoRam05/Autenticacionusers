@@ -1,13 +1,22 @@
-# Funcion de Hash para usarlo en la DB
-import hashlib
-from bcrypt import checkpw
+import bcrypt
 
-def hsh_password(password: str) -> str:
-    password_bytes = password.encode('utf-8') 
-    pass_hash = hashlib.sha256(password_bytes)
-    return pass_hash.hexdigest()
+class HashMethod:
+    @staticmethod
+    def hash_password(password: str) -> str:
+        """
+        Hashea la contraseña utilizando bcrypt.
+        """
+        salt = bcrypt.gensalt()  # Genera un salt aleatorio
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+        return hashed_password.decode('utf-8')
 
-def verify_password(password: str, hashed: str) -> bool:
-    
-    verificacion = checkpw(password.encode(), hashed.encode())
-    return verificacion
+    @staticmethod
+    def verify_password(password: str, hashed: str) -> bool:
+        """
+        Verifica si la contraseña coincide con el hash almacenado.
+        """
+        try:
+            return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
+        except Exception as e:
+            # Manejo de errores si ocurre algún problema con el hashing
+            raise ValueError("Error al verificar la contraseña: " + str(e))
