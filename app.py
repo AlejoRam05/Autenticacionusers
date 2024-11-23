@@ -1,23 +1,19 @@
-from fastapi import FastAPI, Request, Form
+from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
-from typing import Annotated
 from db import create_db_and_tables
+from routes import auth_routes, admin_routes, dashboard
 
 jinja2_templates = Jinja2Templates(directory='templates')
 
 app = FastAPI()
 
-@app.get('/', response_class=HTMLResponse)
-async def root(request: Request):
-    return jinja2_templates.TemplateResponse("index.html", {'request': request})
+app.include_router(auth_routes.router)
+app.include_router(admin_routes.router)
+app.include_router(dashboard.router)
 
-@app.post("users/login")
-def login(username: Annotated[str, Form()],email: Annotated[str, Form()], password: Annotated[str, Form()]):
-    return{
-        "usersname": username,
-        "email": email,
-        "password": password}
+@app.get("/")
+def home():
+    return {"message": "Welcome to the AuthApp"}
 
 @app.on_event("startup")
 def startup_event():
