@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import jwt
 import os 
+from fastapi import HTTPException, status
 
 SECRET_KEY = os.getenv('secret_key')  # Asegúrate de que esté bien definida
 ALGORITHM = 'HS256'
@@ -19,6 +20,12 @@ def verify_jwt(token: str):
     try:
         return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except jwt.ExpiredSignatureError:
-        return None
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has expired",
+        )
     except jwt.PyJWTError:
-        return None
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+        )
