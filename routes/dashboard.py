@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError
 from typing import Annotated
 from sqlmodel import Session
 from db import get_session
