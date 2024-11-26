@@ -13,10 +13,15 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 async def dashboard_admin(token: Annotated[str, Depends(oauth2_scheme)], db_admin: Session = (Depends(get_session))):
     try:
         data_verify = verify_jwt(token)
+        if "admin" not in data_verify["roles"]:
+            raise HTTPException(status_code=403, detail="Acceso denegado")
+        
         if data_verify:
             data_admin = db_admin.query(AdminDB).all()
             data_clientes = db_admin.query(ClienteDB).all()
-            return {"admin": data_admin, "clientes": data_clientes}
+            return {"admin": [{"email": admin.email, "username": admin.username} for admin in data_admin],
+            "clientes": [{"email": cliente.email, "username": cliente.username} for cliente in data_clientes]}
+
     except HTTPException as e:
         raise e
 

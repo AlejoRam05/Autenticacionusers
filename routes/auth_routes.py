@@ -71,7 +71,7 @@ async def login(cliente: Cliente, db: Session = Depends(get_session)):
 
         # Crear la respuesta con el token de acceso y establecer la cookie HTTP-only
         response = JSONResponse(content={"access_token": token, "token_type": "bearer"})
-        response.set_cookie(key="session_id", value=session_id, httponly=True, secure=True)
+        response.set_cookie(key="session_id", value=session_id, httponly=True, secure=True, samesite="Strict")
 
         # Asignar el token CSRF al usuario
         failed_attempts[cliente.email]["csrf_token"] = csrf_token
