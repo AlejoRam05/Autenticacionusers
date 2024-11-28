@@ -1,9 +1,7 @@
 from fastapi import FastAPI
-from fastapi.templating import Jinja2Templates
 from db import create_db_and_tables
 from routes import auth_routes, admin_routes, dashboard
 
-jinja2_templates = Jinja2Templates(directory='templates')
 
 app = FastAPI()
 
