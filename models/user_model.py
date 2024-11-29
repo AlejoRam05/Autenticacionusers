@@ -2,6 +2,7 @@
 from pydantic import BaseModel, EmailStr
 from sqlmodel import SQLModel, Field
 from typing import Optional
+from pydantic import validator
 
 class Cliente(BaseModel):
 
@@ -10,6 +11,11 @@ class Cliente(BaseModel):
     password: str
     roles: bool = Field(default=False)
 
+    @validator('username')
+    def validate_username(cls, username):
+        if any(char in username for char in ['<', '>','&', '"', "'"]):
+            raise ValueError('El nombre de usuario no puede contener caracteres especiales.')
+        return username
 class Admin(BaseModel):
 
     username: str

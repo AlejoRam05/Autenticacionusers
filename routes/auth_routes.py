@@ -47,11 +47,11 @@ async def login(cliente: Cliente, db: Session = Depends(get_session)):
         ).first()
 
         if not existe_user:
-            raise HTTPException(status_code=401, detail="Usuario o contraseña incorrectos.")
+            raise HTTPException(status_code=401, detail="Usuario incorrecto.")
         
         # Verificar si la contraseña es correcta
         if not HashMethod.verify_password(cliente.password, existe_user.password):
-            raise HTTPException(status_code=401, detail="Usuario o contraseña incorrectos.")
+            raise HTTPException(status_code=401, detail="Contraseña incorrecta.")
 
         # Verificar si el usuario está bloqueado debido a intentos fallidos
         if cliente.email in failed_attempts and failed_attempts[cliente.email]["attempts"] >= 5:
